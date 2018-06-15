@@ -11,11 +11,25 @@ export default function createView() {
         document.getElementById('operator-plus').addEventListener('click', () => {
             display.innerHTML += ' + ';
         });
+        document.getElementById('operator-equal').addEventListener('click', fireCalculateEvent);
+    }
+
+    let subscribers = [];
+
+    function subscribe(subscriber){
+        subscribers.push(subscriber);
+    }
+    function fireCalculateEvent(){
+        subscribers.forEach((subscriber) => {
+            subscriber({
+                operation: "1"
+            })
+        });
     }
 
     return {
         initialize,
-        subscribeCalculateEvent: (handler) => {},
+        subscribeCalculateEvent: subscribe,
         renderResult: (result) => {},
         renderError: (error) => {}
     }
