@@ -1,5 +1,7 @@
 export default function createController(view, service) {
     return {
-        start: () => {}
+        start: () => {
+            view.initialize();
+        }
     }
 };
