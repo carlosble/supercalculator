@@ -2,7 +2,7 @@ import createApp from '../src/factory';
 const pug = require('pug');
 
 
-describe("the calculator", function () {
+xdescribe("the calculator", function () {
     let app;
     beforeEach(function () {
         document.body.innerHTML = pug.compileFile('./views/main.pug', null)();

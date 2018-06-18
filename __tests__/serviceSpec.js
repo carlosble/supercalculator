@@ -20,17 +20,45 @@ const pug = require('pug');
  */
 
 describe("the calculator service", function () {
-    let service;
+    let service, client;
     beforeEach(function () {
         document.body.innerHTML = pug.compileFile('./views/main.pug', null)();
-        service = createService({});
+        client = {};
+        service = createService(client);
     });
 
-
     it('sum numbers', function () {
+        client.save = (result) => {
+            return Promise.resolve(result); // stub
+        };
         let result = service.calculate("1 + 2");
         expect(result.value).toEqual(3);
         expect(result.isSuccessful).toBeTruthy();
     });
 
+    it('asks the client to save the result', function () {
+        let savedResult = null;
+        client.save = (result) => { // spy
+            savedResult = result;
+            expect(result.value).toEqual(3);
+            return Promise.resolve(result);
+        };
+        service.calculate("1 + 2");
+
+        expect(savedResult).not.toBeNull();
+    });
+
+    it('handles errors in client whilst saving', function (done) {
+        let retries = 0;
+        client.save = () => { // stub y spy
+            ++retries;
+            return Promise.reject('Connection timed out');
+        };
+        service.onClientError = () => {
+            expect(retries).toEqual(3);
+            done();
+        };
+
+        service.calculate("1 + 2");
+    });
 });
